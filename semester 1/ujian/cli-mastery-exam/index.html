@@ -87,6 +87,7 @@
             min-height: 80px;
             font-family: 'SF Mono', 'Fira Code', monospace;
             font-size: 0.9rem;
+            width: 100%;
         }
         .CodeMirror-focused { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
         .btn-hint {
@@ -438,10 +439,11 @@
             cmInstance = CodeMirror.fromTextArea(textarea, {
                 mode: 'shell',
                 lineNumbers: false,
+                lineWrapping: true,           // <-- penting: wrap baris panjang
                 viewportMargin: Infinity,
                 theme: 'default'
             });
-            cmInstance.setSize(null, 'auto');
+            cmInstance.setSize('100%', 'auto'); // lebar 100% mengikuti container, tinggi otomatis
             cmInstance.on('change', () => {
                 const newVal = cmInstance.getValue();
                 if (currentAnswers[currentIndex] !== newVal) {
@@ -449,6 +451,8 @@
                     persistFull();
                     updateProgressAndNav();
                 }
+                // perbarui tinggi setelah konten berubah
+                cmInstance.setSize('100%', 'auto');
             });
             if (isSubmitted) cmInstance.setOption('readOnly', true);
         }
