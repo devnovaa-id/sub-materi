@@ -1,3 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DevNova-ID | CLI Command Mastery Exam</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/shell/shell.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 2rem 1rem;
+            color: #0f172a;
+        }
+        .exam-wrapper { max-width: 1400px; margin: 0 auto; }
+        .card-modern {
+            background: #ffffff;
+            border-radius: 28px;
+            border: none;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+        .card-header-custom {
+            background: white;
+            border-bottom: 1px solid #e9eef3;
+            padding: 1.25rem 1.75rem;
+            border-radius: 28px 28px 0 0;
+        }
+        .card-body-custom { padding: 1.75rem; }
+        .navbar-brand-custom {
+            background: white;
+            border-radius: 60px;
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+        }
+        .badge-db {
+            background: #f8fafc;
+            color: #1e293b;
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+        }
+        .nav-quiz-item {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: #f1f5f9;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .nav-quiz-item.answered-mcq { background: #dbeafe; border-color: #a5c9ff; color: #1e40af; }
+        .nav-quiz-item.answered-essay { background: #dcfce7; border-color: #bbf7d0; color: #166534; }
+        .nav-quiz-item.current { background: #3b82f6; border-color: #3b82f6; color: white; box-shadow: 0 4px 8px rgba(59,130,246,0.2); }
+        .option-item {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e9edf2;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .option-item:hover:not(.disabled-opt) { background: #f1f5f9; border-color: #cbd5e1; transform: translateX(4px); }
+        .form-check-input:checked { background-color: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+        .CodeMirror {
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 0.5rem;
+            background: #f8fafc;
+            height: auto;
+            min-height: 80px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+        .CodeMirror-focused { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .btn-hint {
+            background: #fef9e3;
+            border: 1px solid #fde68a;
+            color: #b45309;
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .btn-hint:hover:not(:disabled) { background: #fffbeb; border-color: #fcd34d; }
+        .hint-message { background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 16px; padding: 0.75rem 1rem; font-size: 0.8rem; color: #78350f; }
+        .progress-custom { height: 8px; border-radius: 10px; background-color: #e2e8f0; }
+        .result-badge { background: #f8fafc; border-radius: 24px; border-left: 5px solid #3b82f6; padding: 1rem; }
+        .detail-item { background: #ffffff; border-radius: 20px; padding: 0.9rem; margin-bottom: 0.75rem; border: 1px solid #ecf3fa; }
+        .detail-correct { border-left: 4px solid #22c55e; }
+        .detail-partial { border-left: 4px solid #f59e0b; }
+        .detail-wrong { border-left: 4px solid #ef4444; }
+        .btn-outline-secondary-custom { border-radius: 40px; padding: 0.5rem 1.5rem; font-weight: 500; }
+        .btn-primary-custom { background: #3b82f6; border: none; border-radius: 40px; padding: 0.6rem 1.5rem; font-weight: 600; box-shadow: 0 2px 4px rgba(59,130,246,0.2); }
+        footer { font-size: 0.7rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 2rem; text-align: center; }
+        .text-accent { color: #3b82f6; }
+        .badge-progress { background: #f1f5f9; color: #1e293b; font-weight: 500; }
+        .disabled-opt, .disabled-essay { opacity: 0.6; pointer-events: none; }
+        .timer-text { font-family: monospace; font-size: 0.9rem; font-weight: 500; }
         .share-btn { background: #10b981; border: none; border-radius: 40px; padding: 0.5rem 1rem; color: white; font-weight: 500; }
         .share-btn:hover { background: #059669; }
         @media (max-width: 768px) { .card-body-custom { padding: 1.25rem; } .nav-quiz-item { width: 40px; height: 40px; } }
@@ -45,7 +160,7 @@
             <div class="card-modern mb-4">
                 <div class="card-body-custom">
                     <div class="d-flex align-items-center gap-2 mb-2"><i class="fas fa-flag-checkered text-warning"></i><h5 class="fw-bold m-0">Challenge Mode</h5></div>
-                    <p class="text-secondary small">Skor akhir = (total skor) - (0.5 × hint). Minimal <strong class="text-warning">10 poin</strong> untuk lulus. <br><small class="text-muted">Essay dinilai kemiripan (0-1).</small></p>
+                    <p class="text-secondary small">Skor akhir = (total skor) - (0.5 × hint). Minimal <strong class="text-warning">10 poin</strong> untuk lulus. <br><small class="text-muted">Essay dinilai kemiripan token.</small></p>
                     <hr class="my-3">
                     <div id="resultArea"><div class="alert alert-light border text-secondary small"><i class="fas fa-hourglass-half me-1"></i> Hasil akan muncul setelah kumpulkan.</div></div>
                 </div>
@@ -60,25 +175,104 @@
             </div>
         </div>
     </div>
-    <footer><i class="fas fa-exclamation-triangle me-1"></i> Perintah essay harus ditulis persis. Gunakan && untuk chain command. Skor parsial diberikan jika mirip.</footer>
+    <footer><i class="fas fa-exclamation-triangle me-1"></i> Tulis perintah Linux dengan tepat. Gunakan && untuk menggabungkan perintah.</footer>
 </div>
 
 <script>
+    // Soal dengan redaksi lebih menantang, minim clue
     const QUESTIONS = [
-        { type: "mcq", text: "Perintah untuk berpindah ke direktori home pengguna saat ini adalah?", options: ["cd /home", "cd ~", "cd ..", "cd ."], correct: 1, hint: "Tanda ~ melambangkan home directory", analogy: "Seperti menekan tombol 'rumah' pada remote." },
-        { type: "mcq", text: "Apa fungsi dari 'mkdir -p a/b/c' ?", options: ["Membuat file a/b/c", "Membuat direktori c di dalam b di dalam a (rekursif)", "Menghapus direktori a/b/c", "Menampilkan isi direktori"], correct: 1, hint: "Opsi -p membuat parent directory jika belum ada", analogy: "Membuka map bertingkat dalam satu langkah." },
-        { type: "mcq", text: "Perintah yang tepat untuk melihat isi file 'data.txt' adalah?", options: ["ls data.txt", "cat data.txt", "touch data.txt", "pwd data.txt"], correct: 1, hint: "cat menampilkan isi file teks", analogy: "Membuka buku dan membaca halamannya." },
-        { type: "mcq", text: "Apa perbedaan antara 'rm -r folder' dan 'rm -rf folder' ?", options: ["Sama saja", "rm -rf lebih paksa tanpa konfirmasi", "rm -r hanya untuk file", "rm -rf tidak bisa hapus folder"], correct: 1, hint: "Opsi -f (force) memaksa tanpa konfirmasi", analogy: "Menghapus sampah dengan paksa tanpa bertanya." },
-        { type: "essay", text: "Buat satu baris perintah untuk membuat direktori 'a/b/c/d' secara rekursif, lalu buat file kosong 'aku.txt' di dalam 'a/b/c/', kemudian hapus direktori 'a' beserta isinya. (Gunakan &&)", expected: "mkdir -p a/b/c/d && touch a/b/c/aku.txt && rm -rf a", hint: "Urutan: mkdir -p, touch, rm -rf", analogy: "Membuat tumpukan map, meletakkan kertas, lalu membuang tumpukan." },
-        { type: "essay", text: "Buat file kosong 'aku.txt' di direktori saat ini, buat direktori 'aku', pindahkan 'aku.txt' ke dalam 'aku' dan ubah namanya menjadi 'kamu.txt'.", expected: "touch aku.txt && mkdir aku && mv aku.txt aku/kamu.txt", hint: "touch, mkdir, mv dengan target path termasuk nama baru", analogy: "Membuat lembaran kosong, menyiapkan map, memindahkan sambil mengganti label." },
-        { type: "essay", text: "Buat direktori 'kamu', lalu salin file 'aku/kamu.txt' (dari soal sebelumnya) ke 'kamu/aku.txt' (asumsikan aku/kamu.txt sudah ada).", expected: "mkdir kamu && cp aku/kamu.txt kamu/aku.txt", hint: "cp dengan source dan target path", analogy: "Membuat map baru, memfotokopi dokumen dari map lain." },
-        { type: "essay", text: "Pindah ke direktori 'aku', hapus paksa direktori '~/kamu' (di home), buat direktori '~/a/b/c/d' secara rekursif, pindah ke direktori tersebut, lalu buat file kosong '~/aku/aku.txt'.", expected: "cd aku && rm -rf ~/kamu && mkdir -p ~/a/b/c/d && cd ~/a/b/c/d && touch ~/aku/aku.txt", hint: "Gunakan ~ untuk home, urutan cd, rm -rf, mkdir -p, cd, touch", analogy: "Berjalan ke ruang A, membuang paksa map di rumah, membuat struktur baru, lalu membuat file." },
-        { type: "essay", text: "Kembali ke home directory, lalu hapus direktori 'a' dan 'aku' sekaligus menggunakan rm -rf.", expected: "cd ~ && rm -rf a aku", hint: "cd ~ kembali ke home, lalu rm -rf dengan dua argumen", analogy: "Pulang ke rumah, lalu membuang dua map besar sekaligus." },
-        { type: "essay", text: "Buat direktori 'latihan', masuk ke dalamnya, buat file 'tes.txt' dengan touch, lalu kembali ke home directory, dan hapus direktori 'latihan' beserta isinya. Gunakan chain &&.", expected: "mkdir latihan && cd latihan && touch tes.txt && cd ~ && rm -rf latihan", hint: "Urutan: mkdir, cd, touch, cd ~, rm -rf", analogy: "Membuat map baru, masuk, meletakkan kertas, keluar, membuang map." },
-        { type: "essay", text: "Tampilkan isi dua file 'a.txt' dan 'b.txt' secara berurutan menggunakan cat dalam satu baris.", expected: "cat a.txt b.txt", hint: "cat bisa menerima banyak argumen file", analogy: "Membaca dua buku sekaligus." },
-        { type: "essay", text: "Buat direktori 'project/src' secara rekursif, buat file 'main.js' di dalamnya, pindahkan file tersebut ke direktori 'project/bin' yang belum ada (buat sekaligus), lalu hapus direktori 'project' beserta isinya. Semua dalam satu baris chain command.", expected: "mkdir -p project/src && touch project/src/main.js && mkdir -p project/bin && mv project/src/main.js project/bin/ && rm -rf project", hint: "Urutan: mkdir -p src, touch, mkdir -p bin, mv, rm -rf project", analogy: "Membuat struktur proyek, memindahkan file, lalu membuang proyek." }
+        {
+            type: "mcq",
+            text: "Perintah apa yang digunakan untuk langsung menuju direktori home pengguna saat ini?",
+            options: ["cd /home", "cd ~", "cd ..", "cd ."],
+            correct: 1,
+            hint: "Simbol tertentu melambangkan direktori home.",
+            analogy: "Tombol pintas untuk pulang."
+        },
+        {
+            type: "mcq",
+            text: "Opsi yang memungkinkan pembuatan direktori beserta induknya dalam satu perintah adalah...",
+            options: ["-r", "-p", "-f", "-a"],
+            correct: 1,
+            hint: "Opsi ini akan membuat direktori antara jika belum ada.",
+            analogy: "Membuka jalan sekaligus."
+        },
+        {
+            type: "mcq",
+            text: "Untuk menampilkan isi file teks di terminal tanpa editor, gunakan...",
+            options: ["ls", "cat", "touch", "pwd"],
+            correct: 1,
+            hint: "Bukan untuk list direktori atau membuat file kosong.",
+            analogy: "Membaca buku tanpa membuka sampulnya."
+        },
+        {
+            type: "mcq",
+            text: "Agar perintah penghapusan direktori berjalan tanpa meminta konfirmasi, tambahkan opsi...",
+            options: ["-r", "-p", "-f", "-a"],
+            correct: 2,
+            hint: "Opsi ini memaksa tanpa bertanya.",
+            analogy: "Membuang sampah tanpa basa-basi."
+        },
+        {
+            type: "essay",
+            text: "Buatlah satu baris perintah yang melakukan tiga hal: (1) Membuat struktur direktori <code>a/b/c/d</code> sekaligus, (2) Membuat file kosong <code>aku.txt</code> di dalam <code>a/b/c/</code>, (3) Menghapus seluruh direktori <code>a</code> beserta isinya.",
+            expected: "mkdir -p a/b/c/d && touch a/b/c/aku.txt && rm -rf a",
+            hint: "Urutan penting: buat jalur, buat file, hapus paksa.",
+            analogy: "Mendirikan tenda, menaruh barang, lalu membongkar semuanya."
+        },
+        {
+            type: "essay",
+            text: "Lakukan tiga operasi berurutan: buat file <code>aku.txt</code>, buat direktori <code>aku</code>, pindahkan file tersebut ke dalam direktori <code>aku</code> dengan nama <code>kamu.txt</code>.",
+            expected: "touch aku.txt && mkdir aku && mv aku.txt aku/kamu.txt",
+            hint: "Gunakan touch, mkdir, mv, perhatikan target path.",
+            analogy: "Menyiapkan kertas, membuat map, lalu memasukkan kertas ke map dengan label baru."
+        },
+        {
+            type: "essay",
+            text: "Asumsikan sudah ada <code>aku/kamu.txt</code>. Buat direktori <code>kamu</code>, lalu duplikat file tersebut ke dalamnya dengan nama <code>aku.txt</code>.",
+            expected: "mkdir kamu && cp aku/kamu.txt kamu/aku.txt",
+            hint: "Gunakan cp, bukan mv.",
+            analogy: "Memfotokopi dokumen dari laci satu ke laci lain."
+        },
+        {
+            type: "essay",
+            text: "Pindah ke direktori <code>aku</code>, hapus paksa direktori <code>~/kamu</code>, buat struktur <code>~/a/b/c/d</code> sekaligus, pindah ke direktori tersebut, lalu buat file <code>~/aku/aku.txt</code>.",
+            expected: "cd aku && rm -rf ~/kamu && mkdir -p ~/a/b/c/d && cd ~/a/b/c/d && touch ~/aku/aku.txt",
+            hint: "Gunakan ~ untuk home, urutan: cd, rm -rf, mkdir -p, cd, touch.",
+            analogy: "Berpindah ruangan sambil membersihkan dan membangun."
+        },
+        {
+            type: "essay",
+            text: "Kembali ke home, lalu hapus dua direktori sekaligus: <code>a</code> dan <code>aku</code> tanpa konfirmasi.",
+            expected: "cd ~ && rm -rf a aku",
+            hint: "rm -rf bisa menerima banyak target.",
+            analogy: "Pulang lalu membuang dua kardus besar."
+        },
+        {
+            type: "essay",
+            text: "Buat direktori <code>latihan</code>, masuk ke sana, buat file <code>tes.txt</code>, kembali ke home, dan hapus direktori <code>latihan</code> beserta isinya. Semua harus dalam satu rantai perintah.",
+            expected: "mkdir latihan && cd latihan && touch tes.txt && cd ~ && rm -rf latihan",
+            hint: "Rantai: mkdir, cd, touch, cd ~, rm -rf.",
+            analogy: "Masuk ke ruang baru, coret-coret, keluar, lalu hancurkan ruangan."
+        },
+        {
+            type: "essay",
+            text: "Tampilkan isi dua file <code>a.txt</code> dan <code>b.txt</code> secara berurutan hanya dengan satu perintah.",
+            expected: "cat a.txt b.txt",
+            hint: "Perintah yang sama bisa menerima banyak argumen.",
+            analogy: "Membaca dua buku sekaligus."
+        },
+        {
+            type: "essay",
+            text: "Buat struktur <code>project/src</code>, buat <code>main.js</code> di dalamnya, pindahkan file itu ke <code>project/bin</code> (buat direktori tersebut jika belum ada), lalu hapus seluruh <code>project</code>. Gunakan satu rantai perintah.",
+            expected: "mkdir -p project/src && touch project/src/main.js && mkdir -p project/bin && mv project/src/main.js project/bin/ && rm -rf project",
+            hint: "Perhatikan mkdir -p untuk bin, dan akhiri path bin dengan /.",
+            analogy: "Membangun proyek, memindahkan aset, lalu menghapus proyek."
+        }
     ];
+
     const TOTAL = QUESTIONS.length;
+    const PASSING_SCORE = 10;
     const HINT_PENALTY = 0.5;
 
     let currentAnswers = new Array(TOTAL).fill(null);
@@ -89,7 +283,8 @@
     let startTime = null;
     let endTime = null;
     let timerInterval = null;
-    let evalAnimationInterval = null; // Untuk animasi loading
+    let evalAnimationInterval = null;
+    let cmInstance = null;
 
     const DB_NAME = 'DevNovaProDB';
     const STORE_NAME = 'examPro';
@@ -108,7 +303,7 @@
 
     function tokenize(command) {
         if (!command || typeof command !== 'string') return [];
-        return command.match(/(&&|[^\s]+)/g) || [];
+        return command.split(/\s+/).filter(Boolean);
     }
     function levenshteinDistance(a, b) {
         const an = a ? a.length : 0;
@@ -193,10 +388,18 @@
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function formatTime(ms) { if (!ms) return "00:00"; let totalSeconds = Math.floor(ms / 1000); let minutes = Math.floor(totalSeconds / 60); let seconds = totalSeconds % 60; return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; }
     function startTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval = setInterval(() => { if (!isSubmitted && startTime) { const elapsed = Date.now() - startTime; document.getElementById('timerDisplay').innerText = formatTime(elapsed); } else if (isSubmitted && endTime && startTime) { const elapsed = endTime - startTime; document.getElementById('timerDisplay').innerText = formatTime(elapsed); } }, 1000); }
-    function stopTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval = null; }
+    function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+    function destroyCM() {
+        if (cmInstance) {
+            cmInstance.toTextArea();
+            cmInstance = null;
+        }
+    }
 
     function renderCurrentQuestion() {
         if (isSubmitted) return;
+        destroyCM();
         const container = document.getElementById('questionContainer');
         const q = QUESTIONS[currentIndex];
         let html = `<div><h5 class="fw-semibold mb-3"><i class="fas fa-question-circle text-accent me-2"></i>${q.text}</h5>`;
@@ -210,8 +413,7 @@
             });
             html += `</div>`;
         } else {
-            const essayVal = (currentAnswers[currentIndex] && typeof currentAnswers[currentIndex] === 'string') ? currentAnswers[currentIndex] : '';
-            html += `<div class="mt-3"><label class="form-label small fw-semibold"><i class="fas fa-code me-1"></i>Perintah Linux (sensitif):</label><input type="text" class="cmd-input" id="essayInput" placeholder="contoh: mkdir -p a && touch a/file.txt" value="${escapeHtml(essayVal)}"></div>`;
+            html += `<div class="mt-3"><label class="form-label small fw-semibold"><i class="fas fa-code me-1"></i>Tulis perintah Linux (gunakan && jika perlu):</label><textarea id="essayTextarea" style="display:none;"></textarea></div>`;
         }
         const hintDisabled = hintUsed[currentIndex];
         html += `<div class="mt-3 d-flex justify-content-end"><button id="hintBtn" class="btn btn-hint" ${hintDisabled ? 'disabled' : ''}><i class="fas fa-lightbulb me-1"></i> Hint (-0.5)</button></div><div id="hintMsgArea" class="mt-2"></div>`;
@@ -230,19 +432,25 @@
                 });
             });
         } else {
-            const essayInput = document.getElementById('essayInput');
-            if (essayInput) {
-                const newInput = essayInput.cloneNode(true);
-                essayInput.parentNode.replaceChild(newInput, essayInput);
-                newInput.addEventListener('input', (e) => {
-                    const newVal = e.target.value;
-                    if (currentAnswers[currentIndex] !== newVal) {
-                        currentAnswers[currentIndex] = newVal;
-                        persistFull();
-                        updateProgressAndNav();
-                    }
-                });
-            }
+            const textarea = document.getElementById('essayTextarea');
+            const essayVal = (currentAnswers[currentIndex] && typeof currentAnswers[currentIndex] === 'string') ? currentAnswers[currentIndex] : '';
+            textarea.value = essayVal;
+            cmInstance = CodeMirror.fromTextArea(textarea, {
+                mode: 'shell',
+                lineNumbers: false,
+                viewportMargin: Infinity,
+                theme: 'default'
+            });
+            cmInstance.setSize(null, 'auto');
+            cmInstance.on('change', () => {
+                const newVal = cmInstance.getValue();
+                if (currentAnswers[currentIndex] !== newVal) {
+                    currentAnswers[currentIndex] = newVal;
+                    persistFull();
+                    updateProgressAndNav();
+                }
+            });
+            if (isSubmitted) cmInstance.setOption('readOnly', true);
         }
 
         const hintBtn = document.getElementById('hintBtn');
@@ -320,25 +528,22 @@
         try {
             const canvas = await html2canvas(resultElement, { scale: 2, backgroundColor: '#ffffff', logging: false });
             const link = document.createElement('a');
-            link.download = `DevNova_ID_Hasil_Ujian_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.png`;
+            link.download = `DevNova_Hasil_CLI_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.png`;
             link.href = canvas.toDataURL();
             link.click();
         } catch (err) { alert("Gagal membuat gambar: " + err); }
     }
 
-    // Fungsi untuk animasi log evaluasi
     function startEvalAnimation(container) {
         const logLines = [
             "Memulai proses evaluasi...",
-            "Menganalisis jawaban soal 1...",
-            "Menganalisis jawaban soal 2...",
+            "Memeriksa sintaks perintah...",
             "Membandingkan token perintah...",
-            "Menghitung skor parsial untuk essay...",
-            "Memeriksa jawaban MCQ...",
+            "Menghitung skor parsial esai...",
+            "Memeriksa jawaban pilihan ganda...",
             "Menghitung penalti hint...",
             "Mengkompilasi skor akhir...",
-            "Menyimpan hasil ke database...",
-            "Memfinalisasi laporan..."
+            "Menyimpan hasil ke database..."
         ];
         let currentLine = 0;
         const logElement = document.createElement('div');
@@ -350,7 +555,6 @@
         spinner.innerHTML = `<div class="spinner-border text-primary" style="width:2rem;height:2rem;"></div><p class="mt-2">Sedang menganalisa, harap tunggu 1 menit...</p>`;
         container.appendChild(spinner);
 
-        // Tulis log secara bertahap
         evalAnimationInterval = setInterval(() => {
             if (currentLine < logLines.length) {
                 const newLine = document.createElement('div');
@@ -359,14 +563,13 @@
                 logElement.scrollTop = logElement.scrollHeight;
                 currentLine++;
             } else {
-                // Setelah semua log ditulis, tambahkan beberapa baris simulasi
                 const randNum = Math.floor(Math.random() * TOTAL) + 1;
                 const newLine = document.createElement('div');
                 newLine.textContent = `[${new Date().toLocaleTimeString()}] Memverifikasi soal ${randNum}...`;
                 logElement.appendChild(newLine);
                 logElement.scrollTop = logElement.scrollHeight;
             }
-        }, 3000); // Setiap 3 detik
+        }, 3000);
     }
 
     function stopEvalAnimation() {
@@ -378,13 +581,11 @@
 
     async function submitExam() {
         if (isSubmitted) return;
-        
-        // Hentikan timer
         stopTimer();
-        isSubmitted = true; // Set true agar UI tidak bisa dimanipulasi
-        endTime = Date.now(); // waktu selesai
+        isSubmitted = true;
+        endTime = Date.now();
+        destroyCM();
         
-        // Siapkan container
         const qContainer = document.getElementById('questionContainer');
         qContainer.classList.remove('hidden-area');
         qContainer.innerHTML = `<div class="text-center py-4"><h5 class="fw-semibold"><i class="fas fa-cog fa-spin me-2"></i>Proses Evaluasi</h5></div>`;
@@ -394,22 +595,15 @@
         document.querySelectorAll('.option-item, .cmd-input, .btn-hint').forEach(el => el.classList.add('disabled-opt'));
         document.querySelectorAll('input, button:not(#resetExamBtn)').forEach(el => el.setAttribute('disabled', 'disabled'));
 
-        // Mulai animasi log
         startEvalAnimation(qContainer);
-
-        // Tunggu 60 detik
         await new Promise(resolve => setTimeout(resolve, 60000));
-
-        // Hentikan animasi
         stopEvalAnimation();
-        
+
         const { totalScore, hintCount, final } = computeFinalScore();
         latestFinalScore = final;
         await persistFull();
-        stopTimer(); // pastikan lagi
-
         qContainer.classList.add('hidden-area');
-        const passed = final >= 10;
+        const passed = final >= PASSING_SCORE;
         const duration = endTime - startTime;
         const detail = renderDetailResult();
         document.getElementById('resultArea').innerHTML = `
@@ -425,7 +619,6 @@
                 <hr><small class="text-secondary"><i class="fas fa-lock"></i> Jawaban terkunci. Reset untuk ujian ulang.</small>
             </div>
         `;
-        document.getElementById('submitExamBtn').disabled = true;
         const shareBtn = document.getElementById('sharePngBtn');
         if (shareBtn) {
             shareBtn.disabled = false;
@@ -438,7 +631,8 @@
 
     async function resetExam() {
         if (!confirm("Reset seluruh progres? Semua jawaban akan dihapus.")) return;
-        stopEvalAnimation(); // hentikan animasi jika sedang berjalan
+        stopEvalAnimation();
+        destroyCM();
         const db = await openDB();
         const tx = db.transaction(STORE_NAME, 'readwrite');
         tx.objectStore(STORE_NAME).delete(STATE_KEY);
@@ -502,7 +696,7 @@
             document.getElementById('submitExamBtn').disabled = true;
             stopTimer();
             const { totalScore, hintCount, final } = computeFinalScore();
-            const passed = final >= 10;
+            const passed = final >= PASSING_SCORE;
             const duration = (endTime || startTime) - startTime;
             const detail = renderDetailResult();
             document.getElementById('resultArea').innerHTML = `
