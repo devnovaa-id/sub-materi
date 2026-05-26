@@ -129,6 +129,13 @@
             overflow-y: auto;
             margin-bottom: 1rem;
         }
+        .all-questions-reference {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body>
@@ -180,7 +187,6 @@
 </div>
 
 <script>
-    // Soal dengan redaksi lebih menantang, minim clue
     const QUESTIONS = [
         {
             type: "mcq",
@@ -359,6 +365,27 @@
     function getAnswerDisplay(i) { const q=QUESTIONS[i], a=currentAnswers[i]; if(a===null||a==='') return "(Tidak dijawab)"; if(q.type==='mcq') return q.options[a]; return a; }
     function getCorrectAnswerDisplay(i) { const q=QUESTIONS[i]; return q.type==='mcq'?q.options[q.correct]:q.expected; }
 
+    function renderAllQuestionsWithAnswers() {
+        let html = `<div class="all-questions-reference mt-3"><h6 class="fw-semibold"><i class="fas fa-book-open me-2"></i>Referensi Lengkap Soal & Kunci Jawaban</h6>`;
+        for (let i = 0; i < TOTAL; i++) {
+            const q = QUESTIONS[i];
+            html += `<div class="mb-2"><strong>Soal ${i+1}</strong> (${q.type === 'mcq' ? 'Pilihan Ganda' : 'Essay'})<br><span class="text-secondary">${q.text}</span><br>`;
+            if (q.type === 'mcq') {
+                html += `<span class="text-dark">Opsi:</span><ul class="mb-1">`;
+                q.options.forEach((opt, idx) => {
+                    html += `<li>${String.fromCharCode(65+idx)}. ${escapeHtml(opt)}</li>`;
+                });
+                html += `</ul>`;
+                html += `<span class="text-success"><strong>Jawaban Benar:</strong> ${escapeHtml(q.options[q.correct])}</span>`;
+            } else {
+                html += `<span class="text-success"><strong>Jawaban Benar:</strong> <code>${escapeHtml(q.expected)}</code></span>`;
+            }
+            html += `</div><hr class="my-2">`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
     function renderDetailResult() {
         let html = `<div class="detail-result mt-3"><hr><h6 class="fw-semibold"><i class="fas fa-list-ul me-2"></i>Rincian Jawaban</h6>`;
         for (let i = 0; i < TOTAL; i++) {
@@ -439,11 +466,11 @@
             cmInstance = CodeMirror.fromTextArea(textarea, {
                 mode: 'shell',
                 lineNumbers: false,
-                lineWrapping: true,           // <-- penting: wrap baris panjang
+                lineWrapping: true,
                 viewportMargin: Infinity,
                 theme: 'default'
             });
-            cmInstance.setSize('100%', 'auto'); // lebar 100% mengikuti container, tinggi otomatis
+            cmInstance.setSize('100%', 'auto');
             cmInstance.on('change', () => {
                 const newVal = cmInstance.getValue();
                 if (currentAnswers[currentIndex] !== newVal) {
@@ -451,7 +478,6 @@
                     persistFull();
                     updateProgressAndNav();
                 }
-                // perbarui tinggi setelah konten berubah
                 cmInstance.setSize('100%', 'auto');
             });
             if (isSubmitted) cmInstance.setOption('readOnly', true);
@@ -532,7 +558,7 @@
         try {
             const canvas = await html2canvas(resultElement, { scale: 2, backgroundColor: '#ffffff', logging: false });
             const link = document.createElement('a');
-            link.download = `DevNova_Hasil_CLI_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.png`;
+            link.download = `DevNova_Hasil_CLI_Referensi_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.png`;
             link.href = canvas.toDataURL();
             link.click();
         } catch (err) { alert("Gagal membuat gambar: " + err); }
@@ -610,6 +636,7 @@
         const passed = final >= PASSING_SCORE;
         const duration = endTime - startTime;
         const detail = renderDetailResult();
+        const allQuestionsRef = renderAllQuestionsWithAnswers();
         document.getElementById('resultArea').innerHTML = `
             <div class="result-badge" id="resultCaptureArea">
                 <div class="d-flex justify-content-between align-items-center"><strong class="fs-6">Laporan Akhir</strong> ${passed ? '<span class="badge bg-success">Lulus</span>' : '<span class="badge bg-danger">Gagal</span>'}</div>
@@ -619,6 +646,7 @@
                 <div><strong>Skor Akhir:</strong> ${final.toFixed(2)} / ${TOTAL}</div>
                 <div><strong>Waktu Pengerjaan:</strong> ${formatTime(duration)}</div>
                 ${detail}
+                ${allQuestionsRef}
                 <div class="mt-3 text-center"><button id="sharePngBtn" class="share-btn"><i class="fas fa-camera me-2"></i> Bagikan sebagai PNG</button></div>
                 <hr><small class="text-secondary"><i class="fas fa-lock"></i> Jawaban terkunci. Reset untuk ujian ulang.</small>
             </div>
@@ -703,6 +731,7 @@
             const passed = final >= PASSING_SCORE;
             const duration = (endTime || startTime) - startTime;
             const detail = renderDetailResult();
+            const allQuestionsRef = renderAllQuestionsWithAnswers();
             document.getElementById('resultArea').innerHTML = `
                 <div class="result-badge" id="resultCaptureArea">
                     <div class="d-flex justify-content-between"><strong>Laporan Akhir</strong> ${passed ? '<span class="badge bg-success">Lulus</span>' : '<span class="badge bg-danger">Gagal</span>'}</div>
@@ -710,6 +739,7 @@
                     <div>Skor Total: ${totalScore.toFixed(2)}/${TOTAL}</div><div>Hint: ${hintCount} ( -${(hintCount*0.5).toFixed(1)} )</div>
                     <div>Skor Akhir: ${final.toFixed(2)}/${TOTAL}</div><div>Waktu: ${formatTime(duration)}</div>
                     ${detail}
+                    ${allQuestionsRef}
                     <div class="mt-3 text-center"><button id="sharePngBtn" class="share-btn"><i class="fas fa-camera me-2"></i> Bagikan sebagai PNG</button></div>
                     <hr><small class="text-secondary"><i class="fas fa-lock"></i> Jawaban terkunci. Reset untuk ujian ulang.</small>
                 </div>
